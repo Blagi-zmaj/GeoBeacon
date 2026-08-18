@@ -1,0 +1,24 @@
+services:
+  db:
+    build: .
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD: { PGPASSWORD }
+      - POSTGRES_USER: { PGUSER }
+      - POSTGRES_DB: { PGDATABASE }
+    volumes:
+      - db-data:var/lib/postgresql
+      - ./docker/init.sql:docker-entrypoint-initdb.d/init.sql
+    pgadmin:
+      image: dpage/pgadmin4
+      restart: always
+      environment:
+        PGADMIN_DEFAULT_EMAIL: { PGUSER }
+        PGADMIN_DEFAULT_PASSWORD: { PGPASSWORD }
+      ports:
+        - "8080:80"
+volumes:
+  db-data:
