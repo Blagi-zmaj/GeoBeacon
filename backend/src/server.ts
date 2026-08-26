@@ -22,6 +22,17 @@ fastify.get("/", async (request, reply) => {
   }
 });
 
+fastify.get("/incidents", async (request, reply) => {
+  try {
+    const incidents = await pool.query(`
+      SELECT id, title, type, severity, ST_AsGeoJSON(location)::json as geojson, created_at FROM incidents;  
+        `);
+    reply.status(200).send({ incidentsData: incidents.rows });
+  } catch (error) {
+    reply.status(500).send({ error: "Server/Database error" });
+  }
+});
+
 const schema = {
   body: {
     type: "object",
