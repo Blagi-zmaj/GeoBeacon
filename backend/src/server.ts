@@ -33,6 +33,25 @@ fastify.get("/incidents", async (request, reply) => {
   }
 });
 
+fastify.get("/incidents/heatmap", async (request, reply) => {
+  try {
+    const coordinates = await pool.query<{ lng: number; lat: number }>(
+      `
+    SELECT ST_X(location::geometry) as lng, ST_Y(location::geometry) as lat FROM incidents;
+    `,
+    );
+    const heatMap = new Map();
+    coordinates.rows.forEach((row) => {
+      const { lng, lat } = row;
+      const h3Index = latLngToCell(lat, lng, 4);
+      heatMap.set(h3Index, (heatMap.get(h3Index) ?? 0) + 1);
+    });
+    reply.status(200).send({ heatMap: Object.fromEntries(heatMap) });
+  } catch (error) {
+    reply.status(500).send({ error: "Server error" });
+  }
+});
+
 const schema = {
   body: {
     type: "object",
@@ -64,7 +83,6 @@ fastify.post<{ Body: IncidentBody }>(
       `,
         values,
       );
-
       return reply.status(201).send({ clientData: clientData.rows[0] });
     } catch (err) {
       return reply.status(500).send({ error: "Internal server error" });
