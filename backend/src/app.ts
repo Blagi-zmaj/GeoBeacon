@@ -4,6 +4,8 @@ import Fastify from "fastify";
 import { pool } from "./db/pool.js";
 import type { IncidentBody } from "./types/serverTypes.js";
 import { latLngToCell } from "h3-js";
+import fastifyWebsocket from "@fastify/websocket";
+import { WebSocket } from "ws";
 
 const fastify = Fastify({
   logger: {
@@ -13,6 +15,8 @@ const fastify = Fastify({
     },
   },
 });
+
+await fastify.register(fastifyWebsocket);
 
 fastify.get("/", async (request, reply) => {
   try {
@@ -26,6 +30,12 @@ fastify.get("/", async (request, reply) => {
   } catch (error) {
     return reply.status(500).send({ error: "Internal server error" });
   }
+});
+
+fastify.get("/live", { websocket: true }, (socket: WebSocket, req) => {
+  socket.on("message", (message) => {
+    socket.send("Test hello");
+  });
 });
 
 fastify.get("/incidents", async (request, reply) => {

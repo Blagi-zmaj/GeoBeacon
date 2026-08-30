@@ -37,7 +37,6 @@ describe("test incidents endpoint", () => {
         type: "FIRE",
         severity: 3,
         lng: 19.0,
-        // lat: 50.0,
       },
     });
     expect(response.statusCode).toBe(400);
