@@ -5,12 +5,18 @@ import { pool } from "./db/pool.js";
 import type { IncidentBody } from "./types/serverTypes.js";
 import { latLngToCell } from "h3-js";
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({
+  logger: {
+    level: "info",
+    transport: {
+      target: "pino-pretty",
+    },
+  },
+});
 
 fastify.get("/", async (request, reply) => {
   try {
-    const client = await pool.connect();
-    const res = await client.query("SELECT PostGIS_Full_Version();");
+    const res = await pool.query("SELECT PostGIS_Full_Version();");
 
     return {
       status: "OK",
