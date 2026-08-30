@@ -6,19 +6,19 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD: { PGPASSWORD }
-      - POSTGRES_USER: { PGUSER }
-      - POSTGRES_DB: { PGDATABASE }
+      POSTGRES_PASSWORD: ${PGPASSWORD:-postgres}
+      POSTGRES_USER: ${PGUSER:-postgres}
+      POSTGRES_DB: ${PGDATABASE:-ecoWatchDB}
     volumes:
-      - db-data:var/lib/postgresql
-      - ./docker/init.sql:docker-entrypoint-initdb.d/init.sql
-    pgadmin:
-      image: dpage/pgadmin4
-      restart: always
-      environment:
-        PGADMIN_DEFAULT_EMAIL: { PGUSER }
-        PGADMIN_DEFAULT_PASSWORD: { PGPASSWORD }
-      ports:
-        - "8080:80"
+      - db-data:/var/lib/postgresql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGUSER:-admin@ecowatch.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGPASSWORD:-postgres}
+    ports:
+      - "8080:80"
 volumes:
   db-data:
