@@ -8,6 +8,7 @@ import fastifyWebsocket from "@fastify/websocket";
 import { WebSocket } from "ws";
 
 const fastify = Fastify({
+  ignoreTrailingSlash: true,
   logger: {
     level: "info",
     transport: {
@@ -17,6 +18,7 @@ const fastify = Fastify({
 });
 
 await fastify.register(fastifyWebsocket);
+const connectedClients = new Set<WebSocket>();
 
 fastify.get("/", async (request, reply) => {
   try {
@@ -33,8 +35,14 @@ fastify.get("/", async (request, reply) => {
 });
 
 fastify.get("/live", { websocket: true }, (socket: WebSocket, req) => {
+  connectedClients.add(socket);
+
   socket.on("message", (message) => {
     socket.send("Test hello");
+  });
+
+  socket.on("close", () => {
+    connectedClients.delete(socket);
   });
 });
 
@@ -99,6 +107,19 @@ fastify.post<{ Body: IncidentBody }>(
       `,
         values,
       );
+
+      const newIncident = clientData.rows[0];
+      const eventPayload = JSON.stringify({
+        type: "New incident",
+        data: newIncident,
+      });
+
+      connectedClients.forEach((client) => {
+        if (client.readyState === 1) {
+          client.send(eventPayload);
+        }
+      });
+
       return reply.status(201).send({ clientData: clientData.rows[0] });
     } catch (err) {
       return reply.status(500).send({ error: "Internal server error" });
