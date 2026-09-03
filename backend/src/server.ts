@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import { WebSocket } from "ws";
 import incidentRoutes from "./modules/incidents/incidents.routes.js";
+import "./modules/bullMQ/nasa.worker.js";
 
 const app = Fastify({
   routerOptions: {

@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "bullmq": "^6.3.4",
+    "ioredis": "^6.0.0",
+    "pg-format": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/pg-format": "^1.0.5"
+  }
+}

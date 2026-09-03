@@ -10,6 +10,7 @@ const createTables = async () => {
                 type VARCHAR(15) NOT NULL,
                 severity INTEGER,
                 location GEOGRAPHY(Point, 4326) NOT NULL,
+                source_id VARCHAR(1000) UNIQUE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 

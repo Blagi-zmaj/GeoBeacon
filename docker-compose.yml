@@ -20,5 +20,14 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGPASSWORD:-postgres}
     ports:
       - "8080:80"
+  redis:
+    image: redis:8.10.1-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      # - "redis-data:/usr/local/etc/redis/redis.conf"
+      - "redis-data:/data"
 volumes:
   db-data:
+  redis-data:
