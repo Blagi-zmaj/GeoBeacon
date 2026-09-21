@@ -3,9 +3,9 @@ import Fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import { WebSocket } from "ws";
 import incidentRoutes from "./modules/incidents/incidents.routes.js";
-import "./modules/bullMQ/nasa.worker.js";
+import "./modules/ingestion/nasa.worker.js";
 
-const app = Fastify({
+export const app = Fastify({
   routerOptions: {
     ignoreTrailingSlash: true,
   },
@@ -36,7 +36,9 @@ await app.register(incidentRoutes, { prefix: "/api/incidents" });
 
 const start = async () => {
   try {
-    await app.listen({ port: 3000 });
+    if (process.env.NODE_ENV !== "test") {
+      await app.listen({ port: 3000 });
+    }
   } catch (error) {
     app.log.error(error);
     process.exit(1);

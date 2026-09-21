@@ -1,6 +1,7 @@
 import { Redis } from "ioredis";
 import { Queue, Worker } from "bullmq";
 import { pool } from "../../db/pool.js";
+import type { NasaWildfireIncident } from "../../types/nasaTypes.js";
 
 const connection = { host: "localhost", port: 6379 };
 const myQueue = new Queue("nasaQueue", { connection });
@@ -25,24 +26,21 @@ const myWorker = new Worker(
       "https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires",
     );
     const data = await response.json();
-    for (const event of data.events) {
-      const values = [
+
+    const dataMatrix = data.events.map((event: NasaWildfireIncident) => {
+      const lon = event.geometry[0]?.coordinates[0];
+      const lat = event.geometry[0]?.coordinates[1];
+
+      return [
         event.title,
-        event.categories[0].id,
+        event.categories[0]?.id ?? null,
         4,
-        event.geometry[0].coordinates[0],
-        event.geometry[0].coordinates[1],
+        `POINT(${lon}${lat})`,
         event.id,
       ];
-      await pool.query(
-        `
-        INSERT INTO incidents(title, type, severity , location, source_id)
-        VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326), $6)
-        ON CONFLICT (source_id) DO NOTHING;
-        `,
-        values,
-      );
-    }
+    });
+
+    console.log("dataMatrix", dataMatrix);
   },
   {
     connection,

@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { app } from "../app.js";
+import { app } from "../server.js";
 
 describe("test incidents endpoint", () => {
   it("should return a list of incidents", async () => {
     const response = await app.inject({
       method: "GET",
-      url: "/incidents",
+      url: "api/incidents/incidents",
     });
     const incidentsArray = await response.json();
     expect(response.statusCode).toBe(200);
@@ -15,7 +15,7 @@ describe("test incidents endpoint", () => {
   it("should add new record in database", async () => {
     const response = await app.inject({
       method: "POST",
-      url: "/incidents",
+      url: "api/incidents/incidents",
       payload: {
         title: "Request test fire",
         type: "FIRE",
@@ -31,7 +31,7 @@ describe("test incidents endpoint", () => {
   it("should show error when try to add new record in database", async () => {
     const response = await app.inject({
       method: "POST",
-      url: "/incidents",
+      url: "api/incidents/incidents",
       payload: {
         title: "Request test fire",
         type: "FIRE",
