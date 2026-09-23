@@ -6,8 +6,8 @@ const createTables = async () => {
       `
             CREATE TABLE IF NOT EXISTS incidents (
                 id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-                title VARCHAR(50) NOT NULL,
-                type VARCHAR(15) NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                type VARCHAR(50) NOT NULL,
                 severity INTEGER,
                 location GEOGRAPHY(Point, 4326) NOT NULL,
                 source_id VARCHAR(1000) UNIQUE,

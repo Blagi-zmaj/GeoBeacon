@@ -2,6 +2,7 @@ import { Redis } from "ioredis";
 import { Queue, Worker } from "bullmq";
 import { pool } from "../../db/pool.js";
 import type { NasaWildfireIncident } from "../../types/nasaTypes.js";
+import format from "pg-format";
 
 const connection = { host: "localhost", port: 6379 };
 const myQueue = new Queue("nasaQueue", { connection });
@@ -35,12 +36,23 @@ const myWorker = new Worker(
         event.title,
         event.categories[0]?.id ?? null,
         4,
-        `POINT(${lon}${lat})`,
+        `POINT(${lon} ${lat})`,
         event.id,
       ];
     });
 
-    console.log("dataMatrix", dataMatrix);
+    const sql = format(
+      `
+      INSERT INTO incidents (title, type, severity, location, source_id)
+      VALUES %L
+      ON CONFLICT (source_id) DO NOTHING; 
+      `,
+      dataMatrix,
+    );
+
+    await pool.query(sql);
+
+    console.log(`Write ${dataMatrix.length} incidents.`);
   },
   {
     connection,
