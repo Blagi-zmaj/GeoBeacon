@@ -3,6 +3,7 @@ import { Queue, Worker } from "bullmq";
 import { pool } from "../../db/pool.js";
 import type { NasaWildfireIncident } from "../../types/nasaTypes.js";
 import format from "pg-format";
+import { mapNasaEventsToMatrix } from "./nasa.mapper.js";
 
 const connection = { host: "localhost", port: 6379 };
 const myQueue = new Queue("nasaQueue", { connection });
@@ -28,18 +29,11 @@ const myWorker = new Worker(
     );
     const data = await response.json();
 
-    const dataMatrix = data.events.map((event: NasaWildfireIncident) => {
-      const lon = event.geometry[0]?.coordinates[0];
-      const lat = event.geometry[0]?.coordinates[1];
+    const dataMatrix = mapNasaEventsToMatrix(data.events);
 
-      return [
-        event.title,
-        event.categories[0]?.id ?? null,
-        4,
-        `POINT(${lon} ${lat})`,
-        event.id,
-      ];
-    });
+    if (dataMatrix.length === 0) {
+      return;
+    }
 
     const sql = format(
       `
