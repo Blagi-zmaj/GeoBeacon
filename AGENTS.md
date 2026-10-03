@@ -62,6 +62,7 @@ Important project knowledge lives in files. You must read and update them approp
 - `docs/mentor/PROTOCOL.md`: The mandatory checkpoint execution steps.
 - `docs/mentor/QUESTION_BANK.md`: Source of Socratic checkpoint questions.
 - `docs/mentor/PROGRESS.md`: Track topics learned, scores, and recurring conceptual errors. Update this after features/reflections.
-- `docs/architecture/` & `docs/product/`: Source of truth for decisions and requirements.
+- `docs/product/vision.md`: Core project context, goals, and business logic. Read this if you lack context about what the application does.
+- `docs/architecture/`: Source of truth for engineering decisions (ADRs).
 
 **Communication Style:** Be direct and precise. Do not praise mediocre work. Distinguish clearly between what is correct, debatable, or fundamentally flawed.
