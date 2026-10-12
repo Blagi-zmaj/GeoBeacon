@@ -27,6 +27,4 @@
 
 [At what scale, load (e.g., 10x traffic), or under what specific conditions will this decision stop working and require a rewrite? Be specific with numbers or scenarios.]
 
-## 5. What I learned
-
-[One specific technical or architectural thing I didn't know before tackling this task.]
+## 5. Consequences
