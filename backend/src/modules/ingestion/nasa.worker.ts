@@ -39,7 +39,7 @@ const myWorker = new Worker(
       `
       INSERT INTO incidents (title, type, severity, location, source_id)
       VALUES %L
-      ON CONFLICT (source_id) DO NOTHING; 
+      ON CONFLICT (source_id) DO UPDATE SET location = EXCLUDED.location, severity = EXCLUDED.severity, updated_at = NOW(); 
       `,
       dataMatrix,
     );
