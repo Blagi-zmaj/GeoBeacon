@@ -16,6 +16,7 @@ export function mapNasaEventsToMatrix(events: any[]) {
       4,
       `POINT(${lon} ${lat})`,
       event.id,
+      new Date().toISOString(),
     ];
   });
 }

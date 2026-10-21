@@ -20,7 +20,7 @@ await myQueue.upsertJobScheduler(
 );
 setTimeout(async () => {
   await myQueue.removeJobScheduler("nasa-scheduler");
-}, 900000);
+}, 90000);
 const myWorker = new Worker(
   "nasaQueue",
   async (job) => {
@@ -37,7 +37,7 @@ const myWorker = new Worker(
 
     const sql = format(
       `
-      INSERT INTO incidents (title, type, severity, location, source_id)
+      INSERT INTO incidents (title, type, severity, location, source_id, source_timestamp)
       VALUES %L
       ON CONFLICT (source_id) DO UPDATE SET location = EXCLUDED.location, severity = EXCLUDED.severity, updated_at = NOW(); 
       `,
