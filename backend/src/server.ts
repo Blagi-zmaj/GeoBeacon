@@ -3,7 +3,10 @@ import Fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import { WebSocket } from "ws";
 import incidentRoutes from "./modules/incidents/incidents.routes.js";
-import "./modules/ingestion/nasa.worker.js";
+
+if (process.env.NODE_ENV !== "test") {
+  await import("./modules/ingestion/nasa.worker.js");
+}
 
 export const app = Fastify({
   routerOptions: {
